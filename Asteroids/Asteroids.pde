@@ -25,6 +25,7 @@ void draw() {
   // calculate orientaton from ship to mouse
   mousePV=new PVector(mouseX, mouseY);
   mousePV.sub(ship.pos);
+  // verify if ship is alive
   if (ship.exists()) {
     // make systems run
     shoots.run();  // move all shoots
