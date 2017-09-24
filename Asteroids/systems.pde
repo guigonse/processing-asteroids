@@ -19,8 +19,8 @@ class bodySystem {
   }
   void newBody(PVector p, PVector d, float exVAL, float vanVAL) {
     // once created the body (if DELAY has expired) restart DELAY
-    if !(delay>0) {
-      bodies.add(new body(p, d, exVAL, vanVAL);
+    if (!(delay>0)) {
+      bodies.add(new body(p, d, exVAL, vanVAL));
       delay=delayINIT;
     }
   }
@@ -36,3 +36,4 @@ class bodySystem {
       }
     }
   }
+}
