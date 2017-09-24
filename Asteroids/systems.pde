@@ -1,7 +1,7 @@
 /**
  Definition of systems that will manage defined bodies
  */
- 
+
 /** 
  System of bodies (class body); only generates a body after a delay; 
  till then, adding bodies requests are discarded.
@@ -24,16 +24,50 @@ class bodySystem {
       delay=delayINIT;
     }
   }
-  void run(){
+  void run() {
+    delay= (delay > 0) ? (delay-1) : 0;  //reduïm DELAY fins al proper dispar
     Iterator<body> it=bodies.iterator();
-    while (it.hasNext()){
+    while (it.hasNext()) {
       body b=it.next();
       b.move();
-      if (b.exists()){
+      if (b.exists()) {
         b.draw();
       } else {
         it.remove();
       }
     }
+  }
+}
+/**
+ Extends bodySystem class generating bodyTURNINGs randomly and checking
+ its clash with argument's bodySystem
+ */
+class bodyClashSystem extends bodySystem {
+  bodyClashSystem() {
+    super(0);  // no delay in creatin new bodies; it's a RANDOM condition...
+  }
+  void newBody() {
+    // only generates new flying rock if RANDOM mteches, anywhere else, nothing happens 
+    if (random(0, 1)>0.99) {
+      PVector newPOS=PVector.random2D().setMag(random(100, 300));
+      newPOS.add(ship.pos);
+      bodies.add(new bodyTURNING(newPOS, PVector.random2D().setMag(random(0.5, 2)), int(random(1, 3.5))));
+    }
+  }
+  // run all bodies AGAINST another group of bodies
+  void run(bodySystem against) {
+    // restart iterator, and begin clash control
+    Iterator<body> it=bodies.iterator();
+    while (it.hasNext()) {
+      body rock=it.next();
+      for (body shoot : against.bodies) {
+        PVector distPV=PVector.sub(rock.pos, shoot.pos);
+        float dist=distPV.mag();
+        if (dist<rock.size+shoot.size){
+          rock.existence=shoot.existence=0;
+        }
+      }
+    }
+    super.run();  // and now, take profit of mother class definition
   }
 }
