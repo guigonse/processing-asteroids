@@ -25,7 +25,7 @@ class bodySystem {
     }
   }
   void run() {
-    delay= (delay > 0) ? (delay-1) : 0;  //reduïm DELAY fins al proper dispar
+    delay= (delay > 0) ? (delay-1) : 0;  //decrease DELAY till next shoot
     Iterator<body> it=bodies.iterator();
     while (it.hasNext()) {
       body b=it.next();
@@ -47,10 +47,10 @@ class bodyClashSystem extends bodySystem {
     super(0);  // no delay in creatin new bodies; it's a RANDOM condition...
   }
   void newBody() {
-    // only generates new flying rock if RANDOM mteches, anywhere else, nothing happens 
+    // only generates new flying rock if RANDOM matches, anywhere else, nothing happens 
     if (random(0, 1)>0.99) {
       PVector newPOS=PVector.random2D().setMag(random(100, 300));
-      newPOS.add(ship.pos);
+      newPOS.add(ship.pos);  // we generate at an aleatory distance of 100 to 300 from SHIP 
       bodies.add(new bodyTURNING(newPOS, PVector.random2D().setMag(random(0.5, 2)), int(random(1, 3.5))));
     }
   }

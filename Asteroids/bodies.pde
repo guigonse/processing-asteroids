@@ -27,7 +27,7 @@ class body {   // basis body to inherit the rest
     vanish=vanVAL;
     size=1;
   }
-  void move() {
+  void move() {  // moves till the border and rounds 
     pos.add(dir);
     pos.x= (pos.x<0)? width+pos.x : pos.x % width;
     pos.y= (pos.y<0)? height+pos.y : pos.y % height;
@@ -35,7 +35,7 @@ class body {   // basis body to inherit the rest
   }
   void draw() {
     // ellipse order is the easiest one...
-    stroke(int(map(existence, 0, existINIT, 0, 255)));
+    stroke(int(map(existence, 0, existINIT, 128, 255)));
     strokeWeight(2);
     noFill();
     ellipse(pos.x, pos.y, size, size);
@@ -86,6 +86,7 @@ class bodyTURNING extends body {
  */
 class bodyROCKET extends bodyTURNING {
   float dirACC;
+  boolean accelerating=false;
   bodyROCKET(float exVAL) {
     super(screenCENTER.copy(), new PVector(0, 0), exVAL);
     ang=0.0;
@@ -93,10 +94,26 @@ class bodyROCKET extends bodyTURNING {
     size=10;
     dirACC=0.0;
   }
+  void accel(float acc) {
+    if (dirACC==0) {
+      dirACC=1.0;
+    }
+    dirACC *= acc;
+    accelerating=true;
+  }
   void move() {
     ang=mousePV.heading();
+    if (accelerating) {
+      if (dir.mag()==0) {
+        dir.x=1.0;
+        dir.rotate(ang);
+      }
+    }
+    if (mouseButton!=RIGHT) {  // if we have released RIGHT mouse, stop accelerating
+      accelerating=false;
+    }
+    dirACC *= 0.99;  // always reduces acceleration (so velocity increment) or it remains null (both)
     dir.mult(dirACC);
-    dirACC*=0.95;  // reduces acceleration (so velocity increment) or it remains null (both)
     super.move();
   }
   void draw() {
@@ -113,5 +130,9 @@ class bodyROCKET extends bodyTURNING {
     vertex(-size/2, -size/1.5);
     endShape(CLOSE);
     popMatrix();
+    // ASSERTing variable value
+    textSize(12);
+    textAlign(LEFT, BASELINE);
+    text(" "+dirACC+"*("+dir.x+","+dir.y+")", pos.x, pos.y);
   }
 }

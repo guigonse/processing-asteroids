@@ -7,6 +7,8 @@ bodyROCKET ship;
 bodySystem shoots; // we will include our ship "manually" in the SHOOTS
 bodyClashSystem rocks;
 
+int flash=0;
+
 
 void setup() {
   fullScreen();
@@ -29,20 +31,25 @@ void draw() {
   if (ship.exists()) {
     // make systems run
     shoots.run();  // move all shoots
-    rocks.run(shoots);  // move all rocks AGAINST shoots
+    rocks.run(shoots);  // move all rocks AGAINST shoots (including SHIP ;-)
     // generates (or maybe not) new rocks randomly
     rocks.newBody();
   } else {
     textSize(48);
-    textAlign(CENTER,CENTER);
+    textAlign(CENTER, CENTER);
+    flash=(flash>16) ? 0 : (flash+1);
+    fill(abs(map(flash, 0, 16, -255, 255)));
     text("GAME OVER", screenCENTER.x, screenCENTER.y); 
-    fill(0, 102, 153);
-    noLoop();
+    //noLoop();
   }
 }
 
-void mouseClicked() {
-  PVector vel=mousePV.copy();
-  vel.setMag(2.75);
-  shoots.newBody(screenCENTER, vel, 500, 0.5);
+void mousePressed() {
+  if (mouseButton == LEFT) {
+    PVector vel=mousePV.copy();
+    vel.setMag(2.75);
+    shoots.newBody(ship.pos, vel, 500, 1.0);
+  } else if (mouseButton == RIGHT) {
+    ship.accel(1.1);
+  }
 }
